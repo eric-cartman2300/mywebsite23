@@ -8,15 +8,14 @@ params:
   banner:
     buttonText: Get Started
     subtitle: |-
-      A RESPONSIVE SITE TEMPLATE DESIGNED BY HTML5 UP
-      AND RELEASED UNDER THE CREATIVE COMMONS.
+      STUDIES ANALYTICS, READS PHILOSOPHY, LIFTS HEAVY.
     title: Hi, my name is Samarth
   blog: {}
   contact:
     address:
-      - city: City, ST 00000
-        country: Country
-        street: Street
+      - city: London,  NW1 5AQ
+        country: United Kingdom
+        street: Gloucester Place
         title: Address
     buttonClear: Clear
     buttonSend: Send message
@@ -25,7 +24,7 @@ params:
         title: Email
     enable: yes
     phone:
-      - phone: (000) 000-0000 x1234
+      - phone: +44 7778 726075
         title: Phone
   custom_css: []
   custom_js: []
