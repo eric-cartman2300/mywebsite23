@@ -8,14 +8,14 @@ params:
   banner:
     buttonText: Get Started
     subtitle: |-
-      STUDIES ANALYTICS, READS PHILOSOPHY, LIFTS HEAVY.
-    title: Hi, my name is Samarth
+       STUDIES ANALYTICS, READS PHILOSOPHY, LIFTS HEAVY.
+    title: Welcome to Samarth's Website
   blog: {}
   contact:
     address:
       - city: London,  NW1 5AQ
         country: United Kingdom
-        street: Gloucester Place
+        street:  Dorset House
         title: Address
     buttonClear: Clear
     buttonSend: Send message
