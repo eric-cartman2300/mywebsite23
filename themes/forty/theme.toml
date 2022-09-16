@@ -1,18 +1,14 @@
-name = "Forty"
-license = "Creative Commons Attribution 3.0"
-licenselink = "https://github.com/MarcusVirg/forty/blob/master/LICENSE.md"
-description = "A portfolio/blog website built for companies or personal freelancers."
-homepage = "//github.com/MarcusVirg/forty"
-tags = ["portfolio", "company", "contact form", "google analytics", "blog"]
-features = ["blog"]
-min_version = "0.55"
+name = "congo"
+license = "MIT"
+licenselink = "https://github.com/jpanther/congo/blob/master/LICENSE"
+description = "A powerful, lightweight theme for Hugo built with Tailwind CSS."
+
+homepage = "https://github.com/jpanther/congo/"
+demosite = "https://jpanther.github.io/congo/"
+
+tags = ["blog", "minimal", "responsive", "dark mode", "dark", "light", "tailwind", "personal"]
+features = ["syntax higlighting", "dark mode", "emoji"]
 
 [author]
-  name = "Marcus Virginia"
-  homepage = "https://marcusv.me"
-
-# If porting an existing theme
-[original]
-  author = "AJ"
-  name = "HTML5 Up"
-  homepage = "https://html5up.net/forty"
+  name = "James Panther"
+  homepage = "https://jamespanther.com/"
