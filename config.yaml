@@ -1,7 +1,7 @@
 baseURL: https://samarth23.netlify.app/
 languageCode: en-us
 title: Samarth
-theme: forty
+theme: congo
 googleAnalytics: ''
 disqusShortname: ''
 params:
