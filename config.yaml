@@ -78,7 +78,7 @@ params:
         subtitle: 
         title: CV
         url: blogs/aliquam
-      - image: pic02.jpg
+      - image:
         subtitle: Feugiat Amet Tempus
         title: Tempus
         url: blogs/tempus
@@ -90,14 +90,14 @@ params:
         subtitle:
         title: Movie Analysis - IMDB dataset
         url: blogs/ipsum
-      - image: pic05.jpg
-        subtitle: Ipsum Dolor Sit Amet
-        title: Consequat
-        url: blogs/ipsum
-      - image: pic06.jpg
-        subtitle: Feugiat Amet Tempus
-        title: Etiam
-        url: blogs/ipsum
+      # - image: pic05.jpg
+      #   subtitle: Ipsum Dolor Sit Amet
+      #   title: Consequat
+      #   url: blogs/ipsum
+      # - image: pic06.jpg
+      #   subtitle: Feugiat Amet Tempus
+      #   title: Etiam
+      #   url: blogs/etiam
   two:
     buttonText: Get Started
     enable: yes

@@ -11,6 +11,6 @@ draft: false
 image: cv_website.jpg
 keywords: ""
 slug: aliquam
-title: My CV
+title: My CV 
 ---
 
