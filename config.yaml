@@ -51,7 +51,7 @@ params:
         label: LinkedIn
         url: https://www.linkedin.com/in/samarth-sharma-1b7142192/
   image: ''
-  name: Your name
+  name: Samarth Sharma
   navigation:
     button1:
       - name: Get Started
@@ -69,14 +69,14 @@ params:
       - name: Elements
         url: elements.html
     menu: Menu
-    subtitle: By HTML5 Up
-    title: Forty
+    subtitle: 
+    title: Samarth Sharma
   tiles:
     enable: yes
     showcase:
-      - image: pic01.jpg
-        subtitle: Ipsum Dolor Sit Amet
-        title: Aliquam
+      - image: LBS.jpg
+        subtitle: 
+        title: CV
         url: blogs/aliquam
       - image: pic02.jpg
         subtitle: Feugiat Amet Tempus
