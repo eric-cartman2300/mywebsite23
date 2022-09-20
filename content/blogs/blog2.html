@@ -1,0 +1,585 @@
+---
+categories:
+- ""
+- ""
+date: "2017-10-31T22:26:09-05:00"
+description: Lorem Etiam Nullam
+draft: false
+image: Steph-Curry.jpg
+keywords: ""
+slug: magna
+title: The Golden State Rents Analysis
+---
+
+
+
+<div id="installing-packages" class="section level1">
+<h1>Installing Packages</h1>
+<pre class="r"><code>library(tidyverse)  # Load ggplot2, dplyr, and all the other tidyverse packages</code></pre>
+<pre><code>## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
+## ✔ ggplot2 3.3.6      ✔ purrr   0.3.4 
+## ✔ tibble  3.1.8      ✔ dplyr   1.0.10
+## ✔ tidyr   1.2.0      ✔ stringr 1.4.1 
+## ✔ readr   2.1.2      ✔ forcats 0.5.2 
+## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>library(mosaic)</code></pre>
+<pre><code>## Registered S3 method overwritten by &#39;mosaic&#39;:
+##   method                           from   
+##   fortify.SpatialPolygonsDataFrame ggplot2
+## 
+## The &#39;mosaic&#39; package masks several functions from core packages in order to add 
+## additional features.  The original behavior of these functions should not be affected by this.
+## 
+## Attaching package: &#39;mosaic&#39;
+## 
+## The following object is masked from &#39;package:Matrix&#39;:
+## 
+##     mean
+## 
+## The following objects are masked from &#39;package:dplyr&#39;:
+## 
+##     count, do, tally
+## 
+## The following object is masked from &#39;package:purrr&#39;:
+## 
+##     cross
+## 
+## The following object is masked from &#39;package:ggplot2&#39;:
+## 
+##     stat
+## 
+## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     binom.test, cor, cor.test, cov, fivenum, IQR, median, prop.test,
+##     quantile, sd, t.test, var
+## 
+## The following objects are masked from &#39;package:base&#39;:
+## 
+##     max, mean, min, prod, range, sample, sum</code></pre>
+<pre class="r"><code>library(ggthemes)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;ggthemes&#39;
+## 
+## The following object is masked from &#39;package:mosaic&#39;:
+## 
+##     theme_map</code></pre>
+<pre class="r"><code>library(lubridate)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;lubridate&#39;
+## 
+## The following objects are masked from &#39;package:base&#39;:
+## 
+##     date, intersect, setdiff, union</code></pre>
+<pre class="r"><code>library(here)</code></pre>
+<pre><code>## here() starts at /Users/samarth/Desktop/mywebsite23</code></pre>
+<pre class="r"><code>library(skimr)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;skimr&#39;
+## 
+## The following object is masked from &#39;package:mosaic&#39;:
+## 
+##     n_missing</code></pre>
+<pre class="r"><code>library(janitor)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;janitor&#39;
+## 
+## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     chisq.test, fisher.test</code></pre>
+<pre class="r"><code>library(vroom)
+library(tidyquant)</code></pre>
+<pre><code>## Loading required package: PerformanceAnalytics
+## Loading required package: xts
+## Loading required package: zoo
+## 
+## Attaching package: &#39;zoo&#39;
+## 
+## The following objects are masked from &#39;package:base&#39;:
+## 
+##     as.Date, as.Date.numeric
+## 
+## 
+## Attaching package: &#39;xts&#39;
+## 
+## The following objects are masked from &#39;package:dplyr&#39;:
+## 
+##     first, last
+## 
+## 
+## Attaching package: &#39;PerformanceAnalytics&#39;
+## 
+## The following object is masked from &#39;package:graphics&#39;:
+## 
+##     legend
+## 
+## Loading required package: quantmod
+## Loading required package: TTR
+## Registered S3 method overwritten by &#39;quantmod&#39;:
+##   method            from
+##   as.zoo.data.frame zoo</code></pre>
+<pre class="r"><code>library(scales)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;scales&#39;
+## 
+## The following object is masked from &#39;package:vroom&#39;:
+## 
+##     col_factor
+## 
+## The following object is masked from &#39;package:mosaic&#39;:
+## 
+##     rescale
+## 
+## The following object is masked from &#39;package:purrr&#39;:
+## 
+##     discard
+## 
+## The following object is masked from &#39;package:readr&#39;:
+## 
+##     col_factor</code></pre>
+</div>
+<div id="rents-in-san-francisco-2000-2018" class="section level1">
+<h1>Rents in San Francisco 2000-2018</h1>
+<p>We are analysing a dataset of Craiglist listings for rental properties in the greater SF area.</p>
+<pre class="r"><code>rent &lt;- readr::read_csv(&#39;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2022/2022-07-05/rent.csv&#39;)</code></pre>
+<pre><code>## Rows: 200796 Columns: 17
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;,&quot;
+## chr (8): post_id, nhood, city, county, address, title, descr, details
+## dbl (9): date, year, price, beds, baths, sqft, room_in_apt, lat, lon
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<pre class="r"><code>skimr::skim(rent)</code></pre>
+<table>
+<caption><span id="tab:unnamed-chunk-2">Table 1: </span>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td align="left">Name</td>
+<td align="left">rent</td>
+</tr>
+<tr class="even">
+<td align="left">Number of rows</td>
+<td align="left">200796</td>
+</tr>
+<tr class="odd">
+<td align="left">Number of columns</td>
+<td align="left">17</td>
+</tr>
+<tr class="even">
+<td align="left">_______________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Column type frequency:</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">character</td>
+<td align="left">8</td>
+</tr>
+<tr class="odd">
+<td align="left">numeric</td>
+<td align="left">9</td>
+</tr>
+<tr class="even">
+<td align="left">________________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Group variables</td>
+<td align="left">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table>
+<colgroup>
+<col width="18%" />
+<col width="13%" />
+<col width="18%" />
+<col width="5%" />
+<col width="8%" />
+<col width="8%" />
+<col width="12%" />
+<col width="14%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">min</th>
+<th align="right">max</th>
+<th align="right">empty</th>
+<th align="right">n_unique</th>
+<th align="right">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">post_id</td>
+<td align="right">0</td>
+<td align="right">1.00</td>
+<td align="right">9</td>
+<td align="right">14</td>
+<td align="right">0</td>
+<td align="right">200796</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">nhood</td>
+<td align="right">0</td>
+<td align="right">1.00</td>
+<td align="right">4</td>
+<td align="right">43</td>
+<td align="right">0</td>
+<td align="right">167</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">city</td>
+<td align="right">0</td>
+<td align="right">1.00</td>
+<td align="right">5</td>
+<td align="right">19</td>
+<td align="right">0</td>
+<td align="right">104</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">county</td>
+<td align="right">1394</td>
+<td align="right">0.99</td>
+<td align="right">4</td>
+<td align="right">13</td>
+<td align="right">0</td>
+<td align="right">10</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">address</td>
+<td align="right">196888</td>
+<td align="right">0.02</td>
+<td align="right">1</td>
+<td align="right">38</td>
+<td align="right">0</td>
+<td align="right">2869</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">title</td>
+<td align="right">2517</td>
+<td align="right">0.99</td>
+<td align="right">2</td>
+<td align="right">298</td>
+<td align="right">0</td>
+<td align="right">184961</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">descr</td>
+<td align="right">197542</td>
+<td align="right">0.02</td>
+<td align="right">13</td>
+<td align="right">16975</td>
+<td align="right">0</td>
+<td align="right">3025</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">details</td>
+<td align="right">192780</td>
+<td align="right">0.04</td>
+<td align="right">4</td>
+<td align="right">595</td>
+<td align="right">0</td>
+<td align="right">7667</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table>
+<colgroup>
+<col width="11%" />
+<col width="8%" />
+<col width="11%" />
+<col width="9%" />
+<col width="7%" />
+<col width="9%" />
+<col width="9%" />
+<col width="9%" />
+<col width="8%" />
+<col width="9%" />
+<col width="4%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">mean</th>
+<th align="right">sd</th>
+<th align="right">p0</th>
+<th align="right">p25</th>
+<th align="right">p50</th>
+<th align="right">p75</th>
+<th align="right">p100</th>
+<th align="left">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">date</td>
+<td align="right">0</td>
+<td align="right">1.00</td>
+<td align="right">20095718.38</td>
+<td align="right">44694.07</td>
+<td align="right">20000902.00</td>
+<td align="right">20050227.00</td>
+<td align="right">20110924.00</td>
+<td align="right">20120805.0</td>
+<td align="right">20180717.00</td>
+<td align="left">▁▇▁▆▃</td>
+</tr>
+<tr class="even">
+<td align="left">year</td>
+<td align="right">0</td>
+<td align="right">1.00</td>
+<td align="right">2009.51</td>
+<td align="right">4.48</td>
+<td align="right">2000.00</td>
+<td align="right">2005.00</td>
+<td align="right">2011.00</td>
+<td align="right">2012.0</td>
+<td align="right">2018.00</td>
+<td align="left">▁▇▁▆▃</td>
+</tr>
+<tr class="odd">
+<td align="left">price</td>
+<td align="right">0</td>
+<td align="right">1.00</td>
+<td align="right">2135.36</td>
+<td align="right">1427.75</td>
+<td align="right">220.00</td>
+<td align="right">1295.00</td>
+<td align="right">1800.00</td>
+<td align="right">2505.0</td>
+<td align="right">40000.00</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td align="left">beds</td>
+<td align="right">6608</td>
+<td align="right">0.97</td>
+<td align="right">1.89</td>
+<td align="right">1.08</td>
+<td align="right">0.00</td>
+<td align="right">1.00</td>
+<td align="right">2.00</td>
+<td align="right">3.0</td>
+<td align="right">12.00</td>
+<td align="left">▇▂▁▁▁</td>
+</tr>
+<tr class="odd">
+<td align="left">baths</td>
+<td align="right">158121</td>
+<td align="right">0.21</td>
+<td align="right">1.68</td>
+<td align="right">0.69</td>
+<td align="right">1.00</td>
+<td align="right">1.00</td>
+<td align="right">2.00</td>
+<td align="right">2.0</td>
+<td align="right">8.00</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td align="left">sqft</td>
+<td align="right">136117</td>
+<td align="right">0.32</td>
+<td align="right">1201.83</td>
+<td align="right">5000.22</td>
+<td align="right">80.00</td>
+<td align="right">750.00</td>
+<td align="right">1000.00</td>
+<td align="right">1360.0</td>
+<td align="right">900000.00</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td align="left">room_in_apt</td>
+<td align="right">0</td>
+<td align="right">1.00</td>
+<td align="right">0.00</td>
+<td align="right">0.04</td>
+<td align="right">0.00</td>
+<td align="right">0.00</td>
+<td align="right">0.00</td>
+<td align="right">0.0</td>
+<td align="right">1.00</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td align="left">lat</td>
+<td align="right">193145</td>
+<td align="right">0.04</td>
+<td align="right">37.67</td>
+<td align="right">0.35</td>
+<td align="right">33.57</td>
+<td align="right">37.40</td>
+<td align="right">37.76</td>
+<td align="right">37.8</td>
+<td align="right">40.43</td>
+<td align="left">▁▁▅▇▁</td>
+</tr>
+<tr class="odd">
+<td align="left">lon</td>
+<td align="right">196484</td>
+<td align="right">0.02</td>
+<td align="right">-122.21</td>
+<td align="right">0.78</td>
+<td align="right">-123.20</td>
+<td align="right">-122.42</td>
+<td align="right">-122.26</td>
+<td align="right">-122.0</td>
+<td align="right">-74.20</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>str(rent)</code></pre>
+<pre><code>## spec_tbl_df [200,796 × 17] (S3: spec_tbl_df/tbl_df/tbl/data.frame)
+##  $ post_id    : chr [1:200796] &quot;pre2013_134138&quot; &quot;pre2013_135669&quot; &quot;pre2013_127127&quot; &quot;pre2013_68671&quot; ...
+##  $ date       : num [1:200796] 20050111 20050126 20041017 20120601 20041021 ...
+##  $ year       : num [1:200796] 2005 2005 2004 2012 2004 ...
+##  $ nhood      : chr [1:200796] &quot;alameda&quot; &quot;alameda&quot; &quot;alameda&quot; &quot;alameda&quot; ...
+##  $ city       : chr [1:200796] &quot;alameda&quot; &quot;alameda&quot; &quot;alameda&quot; &quot;alameda&quot; ...
+##  $ county     : chr [1:200796] &quot;alameda&quot; &quot;alameda&quot; &quot;alameda&quot; &quot;alameda&quot; ...
+##  $ price      : num [1:200796] 1250 1295 1100 1425 890 ...
+##  $ beds       : num [1:200796] 2 2 2 1 1 1 1 3 NA 2 ...
+##  $ baths      : num [1:200796] 2 NA NA NA NA NA 1 NA 1 NA ...
+##  $ sqft       : num [1:200796] NA NA NA 735 NA NA NA NA NA NA ...
+##  $ room_in_apt: num [1:200796] 0 0 0 0 0 0 0 0 0 0 ...
+##  $ address    : chr [1:200796] NA NA NA NA ...
+##  $ lat        : num [1:200796] NA NA NA NA NA NA NA NA NA NA ...
+##  $ lon        : num [1:200796] NA NA NA NA NA NA NA NA NA NA ...
+##  $ title      : chr [1:200796] &quot;$1250 / 2br - 2BR/2BA   1145 ALAMEDA DE LAS PULGAS&quot; &quot;$1295 / 2br - Walk the Beach! 1 FREE MONTH + $500 TRADER JOES SHOPPING CERTIFICATE&quot; &quot;$1100 / 2br - cottage&quot; &quot;$1425 / 1br - 735ft² - BEST LOCATION SOUTHSHORE GARDENS APARTMENTS&quot; ...
+##  $ descr      : chr [1:200796] NA NA NA NA ...
+##  $ details    : chr [1:200796] NA NA NA NA ...
+##  - attr(*, &quot;spec&quot;)=
+##   .. cols(
+##   ..   post_id = col_character(),
+##   ..   date = col_double(),
+##   ..   year = col_double(),
+##   ..   nhood = col_character(),
+##   ..   city = col_character(),
+##   ..   county = col_character(),
+##   ..   price = col_double(),
+##   ..   beds = col_double(),
+##   ..   baths = col_double(),
+##   ..   sqft = col_double(),
+##   ..   room_in_apt = col_double(),
+##   ..   address = col_character(),
+##   ..   lat = col_double(),
+##   ..   lon = col_double(),
+##   ..   title = col_character(),
+##   ..   descr = col_character(),
+##   ..   details = col_character()
+##   .. )
+##  - attr(*, &quot;problems&quot;)=&lt;externalptr&gt;</code></pre>
+<pre class="r"><code>head(rent)</code></pre>
+<pre><code>## # A tibble: 6 × 17
+##   post_id          date  year nhood city  county price  beds baths  sqft room_…¹
+##   &lt;chr&gt;           &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
+## 1 pre2013_134138 2.01e7  2005 alam… alam… alame…  1250     2     2    NA       0
+## 2 pre2013_135669 2.01e7  2005 alam… alam… alame…  1295     2    NA    NA       0
+## 3 pre2013_127127 2.00e7  2004 alam… alam… alame…  1100     2    NA    NA       0
+## 4 pre2013_68671  2.01e7  2012 alam… alam… alame…  1425     1    NA   735       0
+## 5 pre2013_127580 2.00e7  2004 alam… alam… alame…   890     1    NA    NA       0
+## 6 pre2013_152345 2.01e7  2006 alam… alam… alame…   825     1    NA    NA       0
+## # … with 6 more variables: address &lt;chr&gt;, lat &lt;dbl&gt;, lon &lt;dbl&gt;, title &lt;chr&gt;,
+## #   descr &lt;chr&gt;, details &lt;chr&gt;, and abbreviated variable name ¹​room_in_apt</code></pre>
+<p>Most column types correspond with what they should be, but date is stored as a double ‘20050111’ instead of a date 2005-01-11. Other column types like number of bedrooms (beds) are a double where an integer suffices. We could change this to integer to use less storage space. Description has the most missing values, after which address and details follow with also 190000+ missing values.</p>
+<p>We have plotted the top 20 cities in terms of % of rental listings.</p>
+<pre class="r"><code># creating a dataset with the top 20 cities by number of listings
+top_20_cities &lt;- rent %&gt;%
+  group_by(city) %&gt;%
+  filter(year &lt; 2019) %&gt;% # ensuring we have the right years
+  summarize(total_listings = n()) %&gt;%
+  mutate(percentage = total_listings/sum(total_listings), # changing number to a percentage
+         city = fct_reorder(city, total_listings)) %&gt;% #ordering by # listings
+  slice_max(total_listings, n=20) 
+
+# graphing the top 20 cities as a barplot
+ggplot(top_20_cities) +
+  aes(x = percentage, y = city) +
+  geom_col() +
+  labs(
+    title = &#39;San Fransisco accounts for more than a quarter of all rental classifieds&#39;,
+    subtitle = &#39;% of Craigslist listings, 2000-2018&#39;,
+    x = NULL,
+    y = NULL,
+    caption = &#39;Source: Pennington, Kate(2018). Bay Area Craigslist Rental Housing Posts, 2000-2018&#39;,
+    xticks = &#39;percentage&#39;
+  ) +
+  scale_x_continuous(labels = scales::percent) +
+  theme_minimal(base_size=16)</code></pre>
+<p><img src="/blogs/blog2_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>It is clear that San Francisco is responsible for 25% of the listings, making that the most interesting city to start investigating. To analyse what is happening with the rental prices in San Francisco, we have plotted the evolution of median prices in San Francisco for 0, 1, 2 and 3 bedroom listings.</p>
+<pre class="r"><code>sf_rentals &lt;- rent %&gt;%
+  filter(city == &#39;san francisco&#39;,
+         beds &lt; 4) %&gt;% 
+  mutate(beds = factor(beds)) %&gt;%
+  group_by(beds, year) %&gt;%
+  summarise(rent = median(price))</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;beds&#39;. You can override using the
+## `.groups` argument.</code></pre>
+<pre class="r"><code>ggplot(sf_rentals) +
+ aes(x = year, y = rent, color = beds) +
+  facet_wrap(vars(beds), nrow = 1) +
+  geom_line() +
+  theme( legend.position = &#39;none&#39;) +
+  labs(
+    title = &#39;San Francisco rents have been steadily increasing&#39;,
+    subtitle = &#39;0 to 3-bed listings, 2000-2018&#39;,
+    x = NULL,
+    y = NULL,
+    caption = &#39;Source: Pennington, Kate(2018). Bay Area Craigslist Rental Housing Posts, 2000-2018&#39;,
+  )</code></pre>
+<p><img src="/blogs/blog2_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>We see that the rents have been increasing sincd 2005, with an exception for the recession in 2008. Since 2015 we see another decrease in rents for all sizes.</p>
+<p>Having considered San Francisco, we turn to analyse the top 12 cities by number of listings in the Bay Area. We plot the median rental prices for those cities below.</p>
+<pre class="r"><code>top12_cities &lt;- rent %&gt;%
+  group_by(city) %&gt;%
+  summarize(total_listings = n()) %&gt;%
+  slice_max(total_listings, n=12)
+
+# creating a vector with the city names
+top12_cities &lt;- top12_cities$city
+
+# gathering the dataset to plot, focusing on 1-bedroom flats
+one_bed_bay_area &lt;- rent %&gt;%
+  filter(beds == 1,
+         city %in% top12_cities) %&gt;%
+  group_by(city, year) %&gt;%
+  summarize(rent = median(price))</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;city&#39;. You can override using the
+## `.groups` argument.</code></pre>
+<pre class="r"><code># creating the plot
+ggplot(one_bed_bay_area) +
+  aes(x = year, y = rent, colour = city) +
+  facet_wrap(vars(city)) +
+  geom_line() +
+  theme( legend.position = &#39;none&#39;) +
+  labs(
+    title = &#39;Rental prices for 1-bedroom flats in the Bay Area&#39;,
+    x = NULL,
+    y = NULL,
+    caption = &#39;Source: Pennington, Kate(2018). Bay Area Craigslist Rental Housing Posts, 2000-2018&#39;,
+  )</code></pre>
+<p><img src="/blogs/blog2_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>We can clearly spot the financial crisis happening in 2008, when all the prices are going down across the cities and types of bedrooms in San Francisco. The effect is the smallest in Santa Rosa and Oakland, where we also don’t see an increase ahead of the recession, so a limited decrease is not unsurprising. The effect is the greatest where the increase is also the greatest, for example a three-bedroom in San Francisco or Santa Clara.</p>
+</div>

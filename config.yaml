@@ -1,7 +1,7 @@
 baseURL: https://samarth23.netlify.app/
 languageCode: en-us
 title: Samarth
-theme: congo
+theme: forty
 googleAnalytics: ''
 disqusShortname: ''
 params:
@@ -41,21 +41,15 @@ params:
         text: 'Design: '
         url: https://www.html5up.net
     social:
-      - icon: fa-twitter
-        label: Twitter
-        url: https://www.twitter.com
-      - icon: fa-facebook
-        label: Facebook
-        url: https://www.facebook.com
       - icon: fa-instagram
         label: Instagram
-        url: https://www.instagram.com
+        url: https://www.instagram.com/samarth.1_/
       - icon: fa-github
         label: GitHub
-        url: https://www.github.com
+        url: https://www.github.com/eric-cartman2300
       - icon: fa-linkedin
         label: LinkedIn
-        url: https://www.linkedin.com
+        url: https://www.linkedin.com/in/samarth-sharma-1b7142192/
   image: ''
   name: Your name
   navigation:
@@ -88,13 +82,13 @@ params:
         subtitle: Feugiat Amet Tempus
         title: Tempus
         url: blogs/tempus
-      - image: pic03.jpg
-        subtitle: Lorem Etiam Nullam
-        title: Magna
+      - image: san-francisco-.jpg
+        subtitle:
+        title: Rents in SFO
         url: blogs/magna
-      - image: pic04.jpg
-        subtitle: Nisl Sed Aliquam
-        title: Ipsum
+      - image: momtana.jpg
+        subtitle:
+        title: Movie Analysis - IMDB dataset
         url: blogs/ipsum
       - image: pic05.jpg
         subtitle: Ipsum Dolor Sit Amet

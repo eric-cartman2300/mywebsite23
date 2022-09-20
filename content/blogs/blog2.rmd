@@ -1,0 +1,130 @@
+---
+categories:
+- ""
+- ""
+date: "2017-10-31T22:26:09-05:00"
+description: Lorem Etiam Nullam
+draft: false
+image: Steph-Curry.jpg
+keywords: ""
+slug: magna
+title: The Golden State Rents Analysis
+---
+# Installing Packages
+
+```{r}
+library(tidyverse)  # Load ggplot2, dplyr, and all the other tidyverse packages
+library(mosaic)
+library(ggthemes)
+library(lubridate)
+library(here)
+library(skimr)
+library(janitor)
+library(vroom)
+library(tidyquant)
+library(scales)
+```
+
+# Rents in San Francisco 2000-2018
+
+We are analysing a dataset of Craiglist listings for rental properties in the greater SF area.
+
+```{r}
+rent <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2022/2022-07-05/rent.csv')
+skimr::skim(rent)
+str(rent)
+head(rent)
+```
+
+Most column types correspond with what they should be, but date is stored as a double '20050111' instead of a date 2005-01-11. Other column types like number of bedrooms (beds) are a double where an integer suffices. We could change this to integer to use less storage space. Description has the most missing values, after which address and details follow with also 190000+ missing values.
+
+
+We have plotted the top 20 cities in terms of % of rental listings. 
+
+```{r}
+# creating a dataset with the top 20 cities by number of listings
+top_20_cities <- rent %>%
+  group_by(city) %>%
+  filter(year < 2019) %>% # ensuring we have the right years
+  summarize(total_listings = n()) %>%
+  mutate(percentage = total_listings/sum(total_listings), # changing number to a percentage
+         city = fct_reorder(city, total_listings)) %>% #ordering by # listings
+  slice_max(total_listings, n=20) 
+
+# graphing the top 20 cities as a barplot
+ggplot(top_20_cities) +
+  aes(x = percentage, y = city) +
+  geom_col() +
+  labs(
+    title = 'San Fransisco accounts for more than a quarter of all rental classifieds',
+    subtitle = '% of Craigslist listings, 2000-2018',
+    x = NULL,
+    y = NULL,
+    caption = 'Source: Pennington, Kate(2018). Bay Area Craigslist Rental Housing Posts, 2000-2018',
+    xticks = 'percentage'
+  ) +
+  scale_x_continuous(labels = scales::percent) +
+  theme_minimal(base_size=16)
+  
+```
+
+It is clear that San Francisco is responsible for 25% of the listings, making that the most interesting city to start investigating. To analyse what is happening with the rental prices in San Francisco, we have plotted the evolution of median prices in San Francisco for 0, 1, 2 and 3 bedroom listings. 
+
+```{r}
+sf_rentals <- rent %>%
+  filter(city == 'san francisco',
+         beds < 4) %>% 
+  mutate(beds = factor(beds)) %>%
+  group_by(beds, year) %>%
+  summarise(rent = median(price))
+  
+
+ggplot(sf_rentals) +
+ aes(x = year, y = rent, color = beds) +
+  facet_wrap(vars(beds), nrow = 1) +
+  geom_line() +
+  theme( legend.position = 'none') +
+  labs(
+    title = 'San Francisco rents have been steadily increasing',
+    subtitle = '0 to 3-bed listings, 2000-2018',
+    x = NULL,
+    y = NULL,
+    caption = 'Source: Pennington, Kate(2018). Bay Area Craigslist Rental Housing Posts, 2000-2018',
+  )
+```
+
+We see that the rents have been increasing sincd 2005, with an exception for the recession in 2008. Since 2015 we see another decrease in rents for all sizes. 
+
+Having considered San Francisco, we turn to analyse the top 12 cities by number of listings in the Bay Area. We plot the median rental prices for those cities below.
+
+```{r}
+top12_cities <- rent %>%
+  group_by(city) %>%
+  summarize(total_listings = n()) %>%
+  slice_max(total_listings, n=12)
+
+# creating a vector with the city names
+top12_cities <- top12_cities$city
+
+# gathering the dataset to plot, focusing on 1-bedroom flats
+one_bed_bay_area <- rent %>%
+  filter(beds == 1,
+         city %in% top12_cities) %>%
+  group_by(city, year) %>%
+  summarize(rent = median(price))
+
+# creating the plot
+ggplot(one_bed_bay_area) +
+  aes(x = year, y = rent, colour = city) +
+  facet_wrap(vars(city)) +
+  geom_line() +
+  theme( legend.position = 'none') +
+  labs(
+    title = 'Rental prices for 1-bedroom flats in the Bay Area',
+    x = NULL,
+    y = NULL,
+    caption = 'Source: Pennington, Kate(2018). Bay Area Craigslist Rental Housing Posts, 2000-2018',
+  )
+```
+
+We can clearly spot the financial crisis happening in 2008, when all the prices are going down across the cities and types of bedrooms in San Francisco. The effect is the smallest in Santa Rosa and Oakland, where we also don't see an increase ahead of the recession, so a limited decrease is not unsurprising. The effect is the greatest where the increase is also the greatest, for example a three-bedroom in San Francisco or Santa Clara. 

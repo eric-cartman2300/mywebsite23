@@ -1,0 +1,123 @@
+---
+categories:
+- ""
+- ""
+date: "2017-10-31T21:28:43-05:00"
+description: ""
+draft: false
+image: taxjan14.jpg
+keywords: ""
+slug: ipsum
+title: Analysing Movies
+---
+#
+```{r}
+knitr::opts_chunk$set(
+  message = FALSE, 
+  warning = FALSE, 
+  tidy=FALSE,     # display code as typed
+  size="small")   # slightly smaller font for code
+options(digits = 3)
+
+# default figure size
+knitr::opts_chunk$set(
+  fig.width=6.75, 
+  fig.height=6.75,
+  fig.align = "center"
+)
+```
+
+# Installing Libraries
+
+```{r}
+
+library(tidyverse)  # Load ggplot2, dplyr, and all the other tidyverse packages
+library(mosaic)
+library(ggthemes)
+library(lubridate)
+library(here)
+library(skimr)
+library(janitor)
+library(httr)
+library(readxl)
+library(vroom)
+library(wbstats)
+library(countrycode)
+library(patchwork)
+library(gganimate)
+```
+
+# Analysis of movies- IMDB dataset
+
+We are now analysing a dataset from imbd with 5000 movies. We will analyse the differences between genres in terms of ratings, popularity (facebook likes), and revenue.
+
+```{r}
+knitr::include_graphics(here::here("images", "brexit.png"), error = FALSE)
+
+# read data directly off github repo
+movies <- read_csv(here::here('data',"movies.csv"))
+
+
+
+
+```
+The movies dataset was imported and inspected using Skimr, and there were no missing values identified within the dataset. When checking for duplicates within the dataset, we identified that there were 54 duplicated titles which may result in duplicated entries within the dataset.
+
+
+### Table showing the amount of IMBD movies per genre
+
+```{r}
+movies_by_genre <- movies %>% 
+  group_by(genre) %>% 
+  summarize(count = n()) %>% 
+  arrange(desc(count))
+  
+movies_by_genre
+```
+
+### Table showing movie revenue indicators per genre
+
+```{r}
+movies %>% 
+  group_by(director) %>% 
+  summarize(highest_gross_revenue = sum(gross), mean_gross_revenue = mean(gross), median_gross_revenue = median(gross), standard_deviation = sd(gross)) %>% 
+  slice_max(highest_gross_revenue, n = 15)
+
+```
+
+## Graphics showing the spread of IMDB ratings per genre
+
+### Table showing the summary statistics for IMDB movie ratings
+
+Added both a density graph and a box plot to visually represent how ratings are distributed. We believe that the box plot more accurately represents the distribution of ratings per genre, with taking the count of rating submissions as well. When cross-analyzing the various distributions, the box plot diagrams allow for an easier comparison between genres.
+
+```{r}
+data <- movies %>% 
+  group_by(genre) %>% 
+  summarize(mean = mean(rating), min = min(rating), max(rating), median = median(rating), standard_dev = sd(rating))
+
+data
+
+#Added an additional visualisation for the representation of the distribution of ratings
+ggplot(movies) + aes(x = rating, y = genre ) + geom_boxplot() + labs(
+    title = 'Distribution of IMDb movie ratings is largely uniform accross genres',
+    subtitle = 'Box plot showing the variation of IMDB genre ratings',
+    x = 'Ratings',
+    y = 'Genres',
+    caption = 'Source: Kaggle IMDB 5000 movie dataset',
+    xticks = ''
+  )
+
+#Required visualisation
+ggplot(movies) + aes(rating) + geom_density() +
+  facet_wrap(vars(genre)) + labs(
+    title = 'Distribution of IMDb movie ratings is largely uniform accross genres',
+    subtitle = 'Density graph showing the variation in IMDB genre ratings',
+    x = 'Ratings',
+    y = 'Density',
+    caption = 'Source: Kaggle IMDB 5000 movie dataset',
+    xticks = ''
+  )
+
+```
+

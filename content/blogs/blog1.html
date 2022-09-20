@@ -1,0 +1,165 @@
+---
+categories:
+- ""
+- ""
+date: "2017-10-31T21:28:43-05:00"
+description: ""
+draft: false
+image: taxjan14.jpg
+keywords: ""
+slug: ipsum
+title: Analysing Movies
+---
+
+
+
+<div id="section" class="section level1">
+<h1></h1>
+<pre class="r"><code>knitr::opts_chunk$set(
+  message = FALSE, 
+  warning = FALSE, 
+  tidy=FALSE,     # display code as typed
+  size=&quot;small&quot;)   # slightly smaller font for code
+options(digits = 3)
+
+# default figure size
+knitr::opts_chunk$set(
+  fig.width=6.75, 
+  fig.height=6.75,
+  fig.align = &quot;center&quot;
+)</code></pre>
+</div>
+<div id="installing-libraries" class="section level1">
+<h1>Installing Libraries</h1>
+<pre class="r"><code>library(tidyverse)  # Load ggplot2, dplyr, and all the other tidyverse packages
+library(mosaic)
+library(ggthemes)
+library(lubridate)
+library(here)
+library(skimr)
+library(janitor)
+library(httr)
+library(readxl)
+library(vroom)
+library(wbstats)
+library(countrycode)
+library(patchwork)
+library(gganimate)</code></pre>
+</div>
+<div id="analysis-of-movies--imdb-dataset" class="section level1">
+<h1>Analysis of movies- IMDB dataset</h1>
+<p>We are now analysing a dataset from imbd with 5000 movies. We will analyse the differences between genres in terms of ratings, popularity (facebook likes), and revenue.</p>
+<pre class="r"><code>knitr::include_graphics(here::here(&quot;images&quot;, &quot;brexit.png&quot;), error = FALSE)</code></pre>
+<p><img src="../../images/brexit.png" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># read data directly off github repo
+movies &lt;- read_csv(here::here(&#39;data&#39;,&quot;movies.csv&quot;))</code></pre>
+<p>The movies dataset was imported and inspected using Skimr, and there were no missing values identified within the dataset. When checking for duplicates within the dataset, we identified that there were 54 duplicated titles which may result in duplicated entries within the dataset.</p>
+<div id="table-showing-the-amount-of-imbd-movies-per-genre" class="section level3">
+<h3>Table showing the amount of IMBD movies per genre</h3>
+<pre class="r"><code>movies_by_genre &lt;- movies %&gt;% 
+  group_by(genre) %&gt;% 
+  summarize(count = n()) %&gt;% 
+  arrange(desc(count))
+  
+movies_by_genre</code></pre>
+<pre><code>## # A tibble: 17 × 2
+##    genre       count
+##    &lt;chr&gt;       &lt;int&gt;
+##  1 Comedy        848
+##  2 Action        738
+##  3 Drama         498
+##  4 Adventure     288
+##  5 Crime         202
+##  6 Biography     135
+##  7 Horror        131
+##  8 Animation      35
+##  9 Fantasy        28
+## 10 Documentary    25
+## 11 Mystery        16
+## 12 Sci-Fi          7
+## 13 Family          3
+## 14 Musical         2
+## 15 Romance         2
+## 16 Western         2
+## 17 Thriller        1</code></pre>
+</div>
+<div id="table-showing-movie-revenue-indicators-per-genre" class="section level3">
+<h3>Table showing movie revenue indicators per genre</h3>
+<pre class="r"><code>movies %&gt;% 
+  group_by(director) %&gt;% 
+  summarize(highest_gross_revenue = sum(gross), mean_gross_revenue = mean(gross), median_gross_revenue = median(gross), standard_deviation = sd(gross)) %&gt;% 
+  slice_max(highest_gross_revenue, n = 15)</code></pre>
+<pre><code>## # A tibble: 15 × 5
+##    director          highest_gross_revenue mean_gross_revenue median_g…¹ stand…²
+##    &lt;chr&gt;                             &lt;dbl&gt;              &lt;dbl&gt;      &lt;dbl&gt;   &lt;dbl&gt;
+##  1 Steven Spielberg             4014061704         174524422. 164435221   1.01e8
+##  2 Michael Bay                  2231242537         171634041. 138396624   1.27e8
+##  3 Tim Burton                   2071275480         129454718.  76519172   1.09e8
+##  4 Sam Raimi                    2014600898         201460090. 234903076   1.62e8
+##  5 James Cameron                1909725910         318287652. 175562880.  3.09e8
+##  6 Christopher Nolan            1813227576         226653447  196667606.  1.87e8
+##  7 George Lucas                 1741418480         348283696  380262555   1.46e8
+##  8 Robert Zemeckis              1619309108         124562239. 100853835   9.13e7
+##  9 Clint Eastwood               1378321100          72543216.  46700000   7.55e7
+## 10 Francis Lawrence             1358501971         271700394. 281666058   1.35e8
+## 11 Ron Howard                   1335988092         111332341  101587923   8.19e7
+## 12 Gore Verbinski               1329600995         189942999. 123207194   1.54e8
+## 13 Andrew Adamson               1137446920         284361730  279680930.  1.21e8
+## 14 Shawn Levy                   1129750988         102704635.  85463309   6.55e7
+## 15 Ridley Scott                 1128857598          80632686.  47775715   6.88e7
+## # … with abbreviated variable names ¹​median_gross_revenue, ²​standard_deviation</code></pre>
+</div>
+<div id="graphics-showing-the-spread-of-imdb-ratings-per-genre" class="section level2">
+<h2>Graphics showing the spread of IMDB ratings per genre</h2>
+<div id="table-showing-the-summary-statistics-for-imdb-movie-ratings" class="section level3">
+<h3>Table showing the summary statistics for IMDB movie ratings</h3>
+<p>Added both a density graph and a box plot to visually represent how ratings are distributed. We believe that the box plot more accurately represents the distribution of ratings per genre, with taking the count of rating submissions as well. When cross-analyzing the various distributions, the box plot diagrams allow for an easier comparison between genres.</p>
+<pre class="r"><code>data &lt;- movies %&gt;% 
+  group_by(genre) %&gt;% 
+  summarize(mean = mean(rating), min = min(rating), max(rating), median = median(rating), standard_dev = sd(rating))
+
+data</code></pre>
+<pre><code>## # A tibble: 17 × 6
+##    genre        mean   min `max(rating)` median standard_dev
+##    &lt;chr&gt;       &lt;dbl&gt; &lt;dbl&gt;         &lt;dbl&gt;  &lt;dbl&gt;        &lt;dbl&gt;
+##  1 Action       6.23   2.1           9     6.3         1.03 
+##  2 Adventure    6.51   2.3           8.6   6.6         1.09 
+##  3 Animation    6.65   4.5           8     6.9         0.968
+##  4 Biography    7.11   4.5           8.9   7.2         0.760
+##  5 Comedy       6.11   1.9           8.8   6.2         1.02 
+##  6 Crime        6.92   4.8           9.3   6.9         0.849
+##  7 Documentary  6.66   1.6           8.5   7.4         1.77 
+##  8 Drama        6.73   2.1           8.8   6.8         0.917
+##  9 Family       6.5    5.7           7.9   5.9         1.22 
+## 10 Fantasy      6.15   4.3           7.9   6.45        0.959
+## 11 Horror       5.83   3.6           8.5   5.9         1.01 
+## 12 Musical      6.75   6.3           7.2   6.75        0.636
+## 13 Mystery      6.86   4.6           8.5   6.9         0.882
+## 14 Romance      6.65   6.2           7.1   6.65        0.636
+## 15 Sci-Fi       6.66   5             8.2   6.4         1.09 
+## 16 Thriller     4.8    4.8           4.8   4.8        NA    
+## 17 Western      5.7    4.1           7.3   5.7         2.26</code></pre>
+<pre class="r"><code>#Added an additional visualisation for the representation of the distribution of ratings
+ggplot(movies) + aes(x = rating, y = genre ) + geom_boxplot() + labs(
+    title = &#39;Distribution of IMDb movie ratings is largely uniform accross genres&#39;,
+    subtitle = &#39;Box plot showing the variation of IMDB genre ratings&#39;,
+    x = &#39;Ratings&#39;,
+    y = &#39;Genres&#39;,
+    caption = &#39;Source: Kaggle IMDB 5000 movie dataset&#39;,
+    xticks = &#39;&#39;
+  )</code></pre>
+<p><img src="/blogs/blog1_files/figure-html/unnamed-chunk-6-1.png" width="648" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#Required visualisation
+ggplot(movies) + aes(rating) + geom_density() +
+  facet_wrap(vars(genre)) + labs(
+    title = &#39;Distribution of IMDb movie ratings is largely uniform accross genres&#39;,
+    subtitle = &#39;Density graph showing the variation in IMDB genre ratings&#39;,
+    x = &#39;Ratings&#39;,
+    y = &#39;Density&#39;,
+    caption = &#39;Source: Kaggle IMDB 5000 movie dataset&#39;,
+    xticks = &#39;&#39;
+  )</code></pre>
+<p><img src="/blogs/blog1_files/figure-html/unnamed-chunk-6-2.png" width="648" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+</div>
