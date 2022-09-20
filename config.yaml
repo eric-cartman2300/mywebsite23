@@ -74,7 +74,7 @@ params:
   tiles:
     enable: yes
     showcase:
-      - image: LBS.jpg
+      - image: me.jpg
         subtitle: 
         title: CV
         url: blogs/aliquam
@@ -101,11 +101,12 @@ params:
   two:
     buttonText: Get Started
     enable: yes
-    subtitle: "Nullam et orci eu lorem consequat tincidunt vivamus et sagittis libero.
-      \n    Mauris aliquet magna magna sed nunc rhoncus pharetra. \n    Pellentesque
-      condimentum sem. In efficitur ligula tate urna. Maecenas laoreet massa vel lacinia
-      pellentesque lorem ipsum dolor. \n    Nullam et orci eu lorem consequat tincidunt.
-      Vivamus et sagittis libero.\n    Mauris aliquet magna magna sed nunc rhoncus
-      amet pharetra et feugiat tempus."
-    title: Massa libero
+    subtitle: "I am a master's in analytics and management student at London Business School.
+      \n    I have worked as a data science and data analyst intern. \n    Currently I am 
+      working on an impact consulting project with Bain & Company. \n   I love working out and
+      also keep a keen interest in philosophy. \n   Reading phiosophical books helps me handle
+      stress and deal with difficult situations. \n   I love exploring foods from different cuisines
+      and culture. \n   I have made a lot of connections and friends over food and culture!"
+     
+    title: About Me
     url: blogs
