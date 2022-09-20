@@ -74,14 +74,14 @@ params:
   tiles:
     enable: yes
     showcase:
-      - image: me.jpg
+      - image: london.jpg
         subtitle: 
         title: CV
         url: blogs/aliquam
-      - image:
-        subtitle: Feugiat Amet Tempus
-        title: Tempus
-        url: blogs/tempus
+      # - image:
+      #   subtitle: Feugiat Amet Tempus
+      #   title: Tempus
+      #   url: blogs/tempus
       - image: san-francisco-.jpg
         subtitle:
         title: Rents in SFO
